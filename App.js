@@ -11,9 +11,11 @@ import {
 } from "react-native"; //Cada que implemento una nueva etiqueta debo de importarlo
 import pythonImage from "./assets/py.png"; //en assets se guardan las img locales
 import * as ImagePicker from "expo-image-picker";
+import * as Sharing from "expo-sharing";
 
 //Aca contenemos la vista
 export default function App() {
+  //SE DEFINE METODOS
   const [selectedImage, setSelectedImage] = useState(null); //Estado para cambiar la img de la vista
 
   //Funcion para pedir un permiso, asincrono
@@ -35,21 +37,43 @@ export default function App() {
     setSelectedImage({ localUri: pickerResult.uri });
   };
 
+  //funcion para abrir la ventana de compartir
+  const openShareDialog = async () => {
+    //asincrono - esta condicion es para web
+    if (!(await Sharing.isAvailableAsync())) {
+      alert(
+        "La accion de compartir no se encuentra disponible en tu plataforma"
+      );
+      return;
+    }
+
+    //ventana de compartir
+    await Sharing.shareAsync(selectedImage.localUri);
+  };
+
+  //RETORNA LA VISTA
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hola mundo!!!</Text>
-      <Image
-        source={{
-          uri:
-            selectedImage !== null
-              ? selectedImage.localUri
-              : "https://picsum.photos/200/200",
-        }} //imagenes que no son de internet lo defines import nameImage y la direccion es source={imgName}
-        style={styles.image}
-      />
-      <TouchableOpacity onPress={openImagePickerAsync} style={styles.button}>
-        <Text style={styles.buttonText}>Ingresar</Text>
+      <Text style={styles.text}>Seleccione una imagen</Text>
+      <TouchableOpacity onPress={openImagePickerAsync}>
+        <Image
+          source={{
+            uri:
+              selectedImage !== null
+                ? selectedImage.localUri
+                : "https://picsum.photos/200/200",
+          }} //imagenes que no son de internet lo defines import nameImage y la direccion es source={imgName}
+          style={styles.image}
+        />
       </TouchableOpacity>
+
+      {selectedImage ? ( //No aparece el boton para enviar hasta que seleccione otra imagen
+        <TouchableOpacity style={styles.button} onPress={openShareDialog}>
+          <Text style={styles.buttonText}>Compartir img</Text>
+        </TouchableOpacity>
+      ) : (
+        <View />
+      )}
     </View>
   );
 }
@@ -65,6 +89,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 50,
     color: "#fff",
+    textAlign: "center",
+    marginBottom: 10,
   },
   image: {
     height: 200,
