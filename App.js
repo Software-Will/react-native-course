@@ -8,10 +8,12 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  Platform,
 } from "react-native"; //Cada que implemento una nueva etiqueta debo de importarlo
 import pythonImage from "./assets/py.png"; //en assets se guardan las img locales
 import * as ImagePicker from "expo-image-picker";
 import * as Sharing from "expo-sharing";
+import uploadToAnonynousFilesAsync from "anonymous-files";
 
 //Aca contenemos la vista
 export default function App() {
@@ -34,7 +36,12 @@ export default function App() {
       return;
     }
 
-    setSelectedImage({ localUri: pickerResult.uri });
+    if (Platform.OS === "web") {
+      const remoteUri = await uploadToAnonynousFilesAsync(pickerResult.uri);
+      setSelectedImage({ localUri: pickerResult.uri, remoteUri });
+    } else {
+      setSelectedImage({ localUri: pickerResult.uri }); //movil
+    }
   };
 
   //funcion para abrir la ventana de compartir
@@ -42,7 +49,7 @@ export default function App() {
     //asincrono - esta condicion es para web
     if (!(await Sharing.isAvailableAsync())) {
       alert(
-        "La accion de compartir no se encuentra disponible en tu plataforma"
+        `La imagen esta disponible para compartir en: ${selectedImage.remoteUri}`
       );
       return;
     }
