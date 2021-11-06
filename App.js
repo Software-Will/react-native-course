@@ -1,7 +1,14 @@
 //Aca contenemos las librerias de react
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View, Image, Button } from "react-native"; //Cada que implemento una nueva etiqueta debo de importarlo
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from "react-native"; //Cada que implemento una nueva etiqueta debo de importarlo
 import pythonImage from "./assets/py.png"; //en assets se guardan las img locales
 
 //Aca contenemos la vista
@@ -13,12 +20,12 @@ export default function App() {
         source={{ uri: "https://picsum.photos/200/200" }} //imagenes que no son de internet lo defines import nameImage y la direccion es source={imgName}
         style={styles.image}
       />
-      <Button
-        onPress=""
-        title="Ingrese"
-        color="#222"
-        accessibilityLabel="Esto es un boton"
-      />
+      <TouchableOpacity
+        onPress={() => Alert.alert("Presionaste el boton")}
+        style={styles.button}
+      >
+        <Text style={styles.buttonText}>Ingresar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -40,4 +47,16 @@ const styles = StyleSheet.create({
     width: 200,
     borderRadius: 100, //la mitad de la imagen pq no funcion %
   },
+  button: {
+    backgroundColor: "#2f4f4f",
+    padding: 7,
+    marginTop: 10,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 20,
+  },
 });
+
+//https://react-hook-form.com/ - libreria de react para hacer formulario
